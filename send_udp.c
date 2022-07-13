@@ -10,14 +10,13 @@
 
 #include <stdio.h>  
 #include <net/ethernet.h>      // ethernet header
-// #include <netinet/ip_icmp.h> // icmp headder declaration.
 #include <string.h>
 #include <arpa/inet.h>
 
 
 
 int main(int argc, char *argv[]){
-  printf("starting the send program\n");
+ 
   int socket_fd; // creating int var.
   struct sockaddr_in  dest; // creatng a sockaddr_in strucinet_ntoat named dest.
   struct hostent *hostptr; // creatig a pointer to a struct hostent named hostptr- ths struct has info abut the host.
@@ -34,21 +33,11 @@ int main(int argc, char *argv[]){
   bcopy(hostptr->h_addr, (char *)&dest.sin_addr,hostptr->h_length); // initilizing the ip address of the of the structdest by copying it from hostptr.
   dest.sin_port = htons((u_short)0x3333); // initilizing the port of the struct dest.
 
-  // printf("iptype: %d\n", dest.sin_family);
-  // printf("ip addr: %s\n", inet_ntoa(dest.sin_addr));
-  // printf("port: %d\n", dest.sin_port);
-
   msgbuf.head = '<'; // initilizing the head of struct msgbuf.
   msgbuf.body = htonl(getpid()); /* IMPORTANT! */ //the size of the body is the process id lond 
   msgbuf.tail = '>'; // initilizing the tail of struct msgbuf.
 
-  // printf("pid= %d\n", getpid());
-
-  // printf("head: %c\n", msgbuf.head );
-  // printf("body: %ld\n", msgbuf.body );
-  // printf("tail: %c\n", msgbuf.tail );
-
   sendto(socket_fd,&msgbuf,sizeof(msgbuf),0,(struct sockaddr *)&dest,sizeof(dest)); //sending the packet to the reciver
-  printf("sent packet\n");
+  
   return 0;
 }
