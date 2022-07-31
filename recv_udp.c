@@ -13,10 +13,10 @@
 void printsin(struct sockaddr_in *s, char *str1, char *str2) {
   printf("%s\n", str1);
   printf("%s: ", str2);
-  //-- port: sin->sin_port (host integer type) 
-   printf("-- port: %d ", s->sin_port);
   // -- IP: sin->sin_addr (IP in dotted-decimal notation) 
-  printf("--IP: %s", inet_ntoa(s->sin_addr));
+  printf("--IP: %s ", inet_ntoa(s->sin_addr));
+  //-- port: sin->sin_port (host integer type) 
+  printf("-- port: %d ", s->sin_port);
   printf("\n");
 }
 

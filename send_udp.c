@@ -7,7 +7,6 @@
 #include <strings.h>
 #include <unistd.h>
 
-
 #include <stdio.h>  
 #include <net/ethernet.h>      // ethernet header
 #include <string.h>
@@ -18,7 +17,7 @@
 int main(int argc, char *argv[]){
  
   int socket_fd; // creating int var.
-  struct sockaddr_in  dest; // creatng a sockaddr_in strucinet_ntoat named dest.
+  struct sockaddr_in  dest; // creatng a sockaddr_in struct named dest.
   struct hostent *hostptr; // creatig a pointer to a struct hostent named hostptr- ths struct has info abut the host.
   struct { char head; u_long body; char tail; } msgbuf; // creatng an unamed struct, the stucts var name is msgbuf it contains 2 chars and an unsigned long.
 
