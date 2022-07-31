@@ -9,40 +9,47 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 #define SIM_LENGTH 10 
-#define IP_ADDRESS "?????" 
+#define IP_ADDRESS "127.0.0.1" 
 #define PORT 1337 
 
 int main(void)
 { 
   int sock; 
-  struct sockaddr_in cli_name; 
   int count;
-  int value; 
+  int value;  // creating int vars
+  struct sockaddr_in cli_name; // creating a sockaddr_in struct named cli_name
 
   printf("Client is alive and establishing socket connection.\n");
   
   
-  sock = socket(AF_INET, SOCK_STREAM, 0);
-  if (sock < 0)
+  sock = socket(AF_INET, SOCK_STREAM, 0); // creating the socket. the int sock will get the socket number if succseful or -i if not.
+  if (sock < 0) // checking if sucsesful.
     { perror ("Error opening channel");
       close(sock);
       exit(1);
     }
       
 
-  bzero(&cli_name, sizeof(cli_name)); 
+  bzero(&cli_name, sizeof(cli_name)); // changing the memory to '\0' in the struct cli_name. before it was all garbage.
+  //(starting at the begining of the emory if the struct- its address to the end of the struct -its size)
+
+  /* initilizig the 3 parts of the struct cli_name: 
+  sin_family= address family- ip type
+  sin_addr.s_addr= ip address
+  sin_port= port number */
   cli_name.sin_family = AF_INET; 
   cli_name.sin_addr.s_addr = inet_addr(IP_ADDRESS); 
   cli_name.sin_port = htons(PORT);
 
 
+// open a connection between the socket and the peer at the eddress of cli_name. return 0 i sucseful, -1 if not.
   if (connect(sock, (struct sockaddr *)&cli_name, sizeof(cli_name)) < 0)
     { perror ("Error establishing communications");
       close(sock);
       exit(1);
     }
 
-
+  // reading the message from the server 4bits at a time
   for (count = 1; count <= SIM_LENGTH; count++)
     { read(sock, &value, 4);
       printf("Client has received %d from socket.\n", value);
@@ -50,7 +57,7 @@ int main(void)
 
   printf("Exiting now.\n");
 
-  close(sock); 
+  close(sock); // closing the socket
   exit(0); 
 
 } 
