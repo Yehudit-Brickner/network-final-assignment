@@ -8,6 +8,9 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 
+
+
+
 #define PORT 9999
 #define SIM_LENGTH 10 
 
@@ -20,7 +23,7 @@ int main(void)
   size_t len; //creating a vaiable that will be the size of somthing
   
   sock = socket(AF_INET, SOCK_STREAM, 0);  // creating the socket. the int sock will get the socket number if succseful or -i if not.
-  // printf("socket number %d", sock); 
+  printf("socket number %d\n", sock); 
   bzero(&serv_name, sizeof(serv_name)); 
   serv_name.sin_family = AF_INET;                                   
   serv_name.sin_port = htons(PORT); 

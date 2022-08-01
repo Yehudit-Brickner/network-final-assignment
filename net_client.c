@@ -9,8 +9,9 @@
 #include <sys/un.h>
 #include <netinet/in.h>
 #define SIM_LENGTH 10 
-#define IP_ADDRESS "127.0.0.1" 
-#define PORT 1337 
+#define IP_ADDRESS "10.9.13.222" 
+// #define IP_ADDRESS "????"
+#define PORT 9999 
 
 int main(void)
 { 
