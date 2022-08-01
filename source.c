@@ -18,11 +18,12 @@
 int main(int argc, char *argv[]){
     int count=0;
     char* p= argv[2];
-    int port = atoi(p);
-    printf("port= %d\n", port);
+    int srcport = atoi(p);
+    int destport = srcport+1;
+    printf("port= %d\n", srcport);
 
     int socket_fd; // creating int var.
-    struct sockaddr_in  dest; // creatng a sockaddr_in struct named dest.
+    struct sockaddr_in  src, dest; // creatng sockaddr_in structs named src and dest.
     struct hostent *hostptr; // creatig a pointer to a struct hostent named hostptr- ths struct has info abut the host.
     // struct { char head; u_long body; char tail; } msgbuf; // creatng an unamed struct, the stucts var name is msgbuf it contains 2 chars and an unsigned long.
     struct {char head; int body; char tail;} msgbuf;
@@ -36,13 +37,18 @@ int main(int argc, char *argv[]){
     hostptr = gethostbyname(argv[1]); // hostptr is the second value passed in the when running the main.
     
     dest.sin_family = (short) AF_INET; // initilizing the ip address type of the struct dest.
-    bcopy(hostptr->h_addr, (char *)&dest.sin_addr,hostptr->h_length); // initilizing the ip address of the of the structdest by copying it from hostptr.
+    bcopy(hostptr->h_addr, (char *)&dest.sin_addr,hostptr->h_length); // initilizing the ip address of the of the struct dest by copying it from hostptr.
     // dest.sin_port = htons((u_short)0x3333); // initilizing the port of the struct dest.
-    
-    dest.sin_port = htons((u_short)port);
-      
+    dest.sin_port = destport;     
 
-    // bind(socket_fd, (struct sockaddr *)&dest, sizeof(dest)); // bindng the socket 
+
+
+    bzero((char *) &src, sizeof(src));
+    src.sin_family = AF_INET;
+    bcopy(hostptr->h_addr, (char *)&dest.sin_addr,hostptr->h_length);
+    src.sin_port =srcport;
+
+    bind(socket_fd, (struct sockaddr *)&src, sizeof(src)); // bindng the socket 
   
 
     while(1){
@@ -53,7 +59,6 @@ int main(int argc, char *argv[]){
         msgbuf.tail = '>'; // initilizing the tail of struct msgbuf.
 
         sendto(socket_fd,&msgbuf,sizeof(msgbuf),0,(struct sockaddr *)&dest,sizeof(dest)); //sending the packet to the reciver
-    
         sleep(1);
     }
     return 0;
