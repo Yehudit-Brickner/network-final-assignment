@@ -25,79 +25,56 @@
 
 
 
-
-
-void printsin(struct sockaddr_in *s, char *str1, char *str2) {
-    printf("%s\n", str1);
-    printf("%s: ", str2);
-    // -- IP: sin->sin_addr (IP in dotted-decimal notation) 
-    printf("--IP: %s ", inet_ntoa(s->sin_addr));
-    //-- port: sin->sin_port (host integer type) 
-    printf("-- port: %d ", s->sin_port);
-    printf("\n");
-}
-
 int main(int argc, char *argv[]){
-    char* p= argv[1];
-    int srcport = atoi(p);
-   
+    char* p= argv[1]; //creating a pointer to the string for the second input passed when running the problem.
+    int srcport2 = atoi(p); // making the srcport number a int
+    int destport2 = srcport2+1; // destport val
+    int middleport = srcport2-1;
     
-    int socket_fd1, socket_fd2, cc, fsize; // creating  int vars socket_fd, cc, fsize.
-    struct sockaddr_in  s_in, from, to; // creating 2 sockaddr_in structs named s_in, from.
-    struct { char head; int  body; char tail;} msg; // creatng an unamed struct, the stucts var name is msg it contains 2 chars and an unsigned long.
+    int socket_fd1, socket_fd2, cc, fsize; // creating  int vars socket_fd1, socket_fd2, cc, fsize.
+    struct sockaddr_in  src2, middle2, dest2; // creating 2 sockaddr_in structs named s_in, from, to.
+    struct { char head; int  body; char tail;} msg; // creatng an unamed struct, the stucts var name is msg it contains 2 chars and an int.
 
-    socket_fd1 = socket (AF_INET, SOCK_DGRAM, 0); // creating a udp socket. will return socket number, or -1 if there was a problem creating the socket.
-    
-    bzero((char *) &s_in, sizeof(s_in));  /* They say you must do this    */ // changing the memory to '\0' in the struct s_in. before it was all garbage.
+    // creating a udp sockets. will return socket number, or -1 if there was a problem creating the socket.
+    socket_fd1 = socket (AF_INET, SOCK_DGRAM, 0); 
+    socket_fd2 = socket (AF_INET, SOCK_DGRAM, 0);
+
+    bzero((char *) &src2, sizeof(src2));  /* They say you must do this    */ // changing the memory to '\0' in the struct s_in. before it was all garbage.
     //(starting at the begining f the emory if the struct- its address to the end of the struct -its size)
+    bzero((char *) &dest2, sizeof(dest2));
 
-    /* initilizig the 3 parts of the struct s_in: 
+
+    /* initilizig the 3 parts of the struct src2 and dest2: 
     sin_family= address family- ip typedest
     sin_addr.s_addr= ip address
     sin_port= port number */
-    s_in.sin_family = (short)AF_INET; 
-    s_in.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
-    // s_in.sin_port = htons((u_short)0x3333); 
-    s_in.sin_port = srcport;
+    src2.sin_family = (short)AF_INET; 
+    src2.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
+    src2.sin_port = srcport2;
+
+    dest2.sin_family = (short)AF_INET; 
+    dest2.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
+    dest2.sin_port = destport2;
 
 
    
-    // to.sin_family = (short)AF_INET; 
-    // to.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
-    // to.sin_port = htons((u_short)0x3333);
-
-    printsin( &s_in, "RECV_UDP", "Local socket is:"); 
-    printf("\n");
     fflush(stdout); // clears the output stream
 
-    bind(socket_fd1, (struct sockaddr *)&s_in, sizeof(s_in)); // bindng the socket 
-
-
-    // bzero((char *) &to, sizeof(to));
-    // to.sin_family = (short)AF_INET; 
-    // to.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
-    // to.sin_port = htons((u_short)0x3333);
-    // bind(socket_fd1, (struct sockaddr *)&to, sizeof(to)); // bindng the socket 
+    bind(socket_fd1, (struct sockaddr *)&src2, sizeof(src2)); // bindng socket1 to the struct src2
+    // bind(socket_fd2, (struct sockaddr *)&dest2, sizeof(dest2)); // bindng socket2 to the struct dest2
+ 
 
     for(;;) {// infinte loop
-        // printf("\n");
-        // printf("waiting to recieve a packet\n");
-        
-        fsize = sizeof(from); // fsize is the size of struct sockaddr_in from
-        cc = recvfrom(socket_fd1,&msg,sizeof(msg),0,(struct sockaddr *)&from,&fsize); //recieving the message sent
-        float num=((float)random())/((float)RAND_MAX);
-        // printf("num = %f\n",num);
-        if (num>0.5){
-        // sendto(socket_fd,&msg,sizeof(msg),0,(stdestruct sockaddr *)&to,sizeof(to)); //sending the packet to the reciver
-            // printsin( &from, "recv_udp: ", "Packet from:"); // printf("\n");
-        // printing the message sent, the ip, and the port.
-            printf("Got data ::%c%d%c\n",msg.head,msg.body,msg.tail); // priniting out the struct msg.
-        }
-        fflush(stdout); // clears the output stream // bzero((char *) &to, sizeof(to));
-    // to.sin_family = (short)AF_INET; 
-    // to.sin_addr.s_addr = htonl(INADDR_ANY);    /* WILDCARD */ 
-    // to.sin_port = htons((u_short)0x3333);
-    // bind(socket_fd1, (struct sockaddr *)&to, sizeof(to)); // bindng the socket 
+        fsize = sizeof(middle2); // fsize is the size of struct sockaddr_in from
+        cc = recvfrom(socket_fd1,&msg,sizeof(msg),0,(struct sockaddr *)&middle2,&fsize); //recieving the message sent
+        // if (middle2.sin_port==middleport){
+            float num=((float)random())/((float)RAND_MAX); // creating a float between 0 and 1
+            if (num>0.5){ // if the number is bigger than 0.5 
+                printf("Relaying data ::%c%d%c from ip %s and port %d\n",msg.head,msg.body,msg.tail,inet_ntoa(middle2.sin_addr), middle2.sin_port); // priniting out the struct msg.
+                sendto(socket_fd1,&msg,sizeof(msg),0,(struct sockaddr *)&dest2,sizeof(dest2)); //sending the packet to the sink
+            }
+        // }
+        fflush(stdout);  // clears the output stream
     }
   
     return 0;
