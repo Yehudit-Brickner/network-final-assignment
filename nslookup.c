@@ -11,16 +11,16 @@ int main(int argc, char* argv[]) {
   struct addrinfo* res; // creating a pointer to addrinfo struct that contains info about address of service provider.
   char* hostname;
   char* hostaddr; // char pointer vars
-  struct sockaddr_in* saddr; // creating a pointer tosockaddr_in struct named saddr
+  struct sockaddr_in* saddr; // creating a pointer to sockaddr_in struct named saddr
   
-  if (argc != 2) { // making sure we got the correct amount of variablesin the command line
+  if (argc != 2) { // making sure we got the correct amount of variables in the command line
     perror("Usage: hostnamelookup <hostname>\n");
     exit(1);
   }
 
   hostname = argv[1]; // host name points to the string of chars that is the website given.
   
-  if (0 != getaddrinfo(hostname, NULL, NULL, &res)) { // making sure we were able to get the ip address of the website given.
+  if (0 != getaddrinfo(hostname, NULL, NULL, &res)) { // making sure we were able to get the ip address of the website given the info is put into the struct res.
     fprintf(stderr, "Error in resolving hostname %s\n", hostname);
     exit(1);
   }
