@@ -19,21 +19,22 @@
 int main(int argc, char *argv[])
 { 
 
+    // getting the ip for the website given
 
     struct addrinfo* res; // creating a pointer to addrinfo struct that contains info about address of service provider.
     char* hostname;
     char* hostaddr; // char pointer vars
     struct sockaddr_in* saddr; // creating a pointer tosockaddr_in struct named saddr
     
-    if (argc != 2) { // making sure we got the correct amount of variablesin the command line
+    if (argc != 2) { // making sure we got the correct amount of variables in the command line
         perror("Usage: hostnamelookup <hostname>\n");
         exit(1);
     }
 
-    hostname = argv[1]; // host name points to the string of chars that is the website given.
+    hostname = argv[1]; // host name points to the string of chars that is the website given when running the code.
     
-    if (0 != getaddrinfo(hostname, NULL, NULL, &res)) { // making sure we were able to get the ip address of the website given the info is put into the struct res.
-        fprintf(stderr, "Error in resolving hostname %s\n", hostname);
+    if (0 != getaddrinfo(hostname, NULL, NULL, &res)) { // making sure we were able to get the ip address of the website given. the info about the website is put into the struct res.
+        fprintf(stderr, "Error in resolving hostname %s\n", hostname); // if we werent able, we will write an error to the file stderr.
         exit(1);
     }
     
@@ -42,6 +43,7 @@ int main(int argc, char *argv[])
 
     printf("Address for %s is %s\n", hostname, hostaddr); // printing the website and the ip addres for it.
     
+    // got the ip address. the rest of the code is very similar to net_client. 
 
     int sock; 
     int count;
@@ -54,14 +56,14 @@ int main(int argc, char *argv[])
     
     sock = socket(AF_INET, SOCK_STREAM, 0); // creating the socket. the int sock will get the socket number if succseful or -i if not.
     if (sock < 0) // checking if sucsesful.
-        { perror ("Error opening channel");
+        { perror ("Error opening channel"); // if not succsesful will write the error to  standard error and close the socket
         close(sock);
         exit(1);
         }
         
 
     bzero(&cli_name, sizeof(cli_name)); // changing the memory to '\0' in the struct cli_name. before it was all garbage.
-    //(starting at the begining of the emory if the struct- its address to the end of the struct -its size)
+    //(starting at the begining of the memory of the struct- its address to the end of the struct -its size)
 
     /* initilizig the 3 parts of the struct cli_name: 
     sin_family= address family- ip type
