@@ -12,10 +12,8 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#define SIM_LENGTH 10
 
 int main(int argc ,char* argv[]){
-
 
     if (argc != 2) { // making sure we got the correct amount of variablesin the command line
         perror("Usage: hostnamelookup <hostname>\n");
@@ -25,28 +23,28 @@ int main(int argc ,char* argv[]){
 
     char *text = argv[1];
     const char t[200]; 
-    memset(&t[0], 0, sizeof(t));
-    strcpy(t,text);
     char hostname[150];
     memset(&hostname[0], 0, sizeof(hostname));
-    // char h[100];
     int port = 80;
-    char page[150];
-    memset(&page[0], 0, sizeof(page));
+    char path[150];
+    memset(&path[0], 0, sizeof(path));
+ 
+    
 
-    sscanf(text, "http://%99[^/]/%99[^\n]", hostname, page);
+    sscanf(text, "http://%99[^/]/%99[^\n]", hostname, path);
     if(strchr(hostname, ':') != NULL){
         char * token = strtok(hostname, ":");
         token = strtok(NULL, " ");
         port = atoi(token);
     }
-
+    
+    
     const char h[150];
     memset(&h[0], 0, sizeof(h));
     strcpy(h,hostname);
-    printf("hostname = \"%s\"\n", hostname);
-    printf("port = \"%d\"\n", port);
-    printf("page = \"%s\"\n", page);
+    // printf("hostname = \"%s\"\n", hostname);
+    // printf("port = \"%d\"\n", port);
+    // printf("path = \"%s\"\n", path);
 
 
 
@@ -92,18 +90,15 @@ int main(int argc ,char* argv[]){
     sin_port= port number */
     cli_name.sin_family = AF_INET; 
     cli_name.sin_addr.s_addr = inet_addr(hostaddr); 
-    cli_name.sin_port = port;
-
-    printf("socket info:\n");
-    printf("port num: %d\n",cli_name.sin_port);
-    printf("ip:%s\n",inet_ntoa(cli_name.sin_addr));
+    cli_name.sin_port = htons(port);
 
   
-    const char  r1[] = "GET ";
-    strcat(r1,t);
+    const char  r1[] = "GET /";
+    strcat(r1,path);
     const char r2[200]; 
     memset(&r2[0], 0, sizeof(r2));
     strcpy(r2,r1);
+    // printf("string2 %s\n",r2);
     const char r3[] = " HTTP/1.0\r\n";
     strcat(r2,r3);
     const char r4[250]; 
@@ -123,7 +118,7 @@ int main(int argc ,char* argv[]){
     const char r9 [700];
     memset(&r9[0], 0, sizeof(r9));
     strcpy(r9,r7);
-    // printf("%s\n", r9);
+    printf("%s", r9);
    
   
 
@@ -134,11 +129,11 @@ int main(int argc ,char* argv[]){
         exit(1);
         }
 
-    printf("conneted\n");
+    printf("CONNECTED!\n\n\n");
 
     int n = write(sock,r9,strlen(r9));
     if (n < 0) herror("ERROR writing to socket");
-    printf("n=%d\n",n);
+    
 
     char buffer[2048];
     memset(&buffer[0], 0, sizeof(buffer));
@@ -148,23 +143,11 @@ int main(int argc ,char* argv[]){
         printf("%s",buffer);
         memset(&buffer[0], 0, sizeof(buffer));
         if (x==0){
-            printf("\n");
+            printf("\n\n");
             break;
         }
     }
     
-
-
-
-    //reading the message from the server 4bits at a time
-    // for (count = 1; count <= SIM_LENGTH; count++)
-    //     { read(sock, &value, 4);
-    //     printf("Client has received %d from socket.\n", value);
-    //     }
-
-    // while( &value !=0){
-    //     printf("%d", value);    
-    // }
 
     printf("Exiting now.\n");
 
